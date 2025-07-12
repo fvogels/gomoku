@@ -10,18 +10,4 @@
     &:hover {
         background-color: lightgreen;
     }
-
-    .stone {
-        border-radius: 50%;
-        width: 80%;
-        height: 80%;
-
-        &.black {
-            background-color: black;
-        }
-
-        &.white {
-            background-color: white;
-        }
-    }
 }

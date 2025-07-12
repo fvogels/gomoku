@@ -1,5 +1,6 @@
 import type { Square } from '@/domain/square';
 import classes from './SquareView.module.css';
+import StoneView from './StoneView';
 
 
 interface Props
@@ -22,10 +23,8 @@ export default function SquareView(props: Props): React.ReactNode
         switch (props.contents) {
             case "empty":
                 return null;
-            case "black":
-                return <div className={`${classes.stone} ${classes.black}`} />;
-            case "white":
-                return <div className={`${classes.stone} ${classes.white}`} />;
+            default:
+                return <StoneView color={props.contents} />;
         }
     }
 

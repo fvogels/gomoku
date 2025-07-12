@@ -8,6 +8,7 @@ import Center from './components/Center';
 import SpreadHorizontally from './components/SpreadHorizontally';
 import StoneCount from './components/StoneCount';
 
+
 function App(): React.ReactNode
 {
     const [game, setGame] = useState(Game.create(19, 19));
@@ -19,7 +20,7 @@ function App(): React.ReactNode
                     <StoneCount color="black" count={game.countStones('black')} />
                     <StoneCount color="white" count={game.countStones('white')} />
                 </SpreadHorizontally>
-                <BoardView contents={game.board.grid} onClickSquare={onClickSquare} />
+                <BoardView board={game.board} onClickSquare={onClickSquare} />
             </Center>
         </>
     );

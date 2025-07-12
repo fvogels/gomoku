@@ -1,24 +1,26 @@
+import { Grid } from "./grid";
 import { Position } from "./position";
 import { opponent, type Square } from "./square";
 
+
 export class Board
 {
-    public readonly grid: Square[][];
+    public readonly grid: Grid<Square>;
 
-    private constructor(grid: Square[][])
+    private constructor(grid: Grid<Square>)
     {
         this.grid = grid;
     }
 
     public get(position: Position): Square
     {
-        return this.grid[position.y][position.x];
+        return this.grid.at(position);
     }
 
     public putStone(position: Position, stone: 'white' | 'black'): Board
     {
-        const grid = this.copyGrid();
-        grid[position.y][position.x] = stone;
+        const grid = this.grid.copy();
+        grid.set(position, stone);
 
         for ( const dx of [-1, 0, 1] )
         {
@@ -30,7 +32,7 @@ export class Board
                     const y = position.y + 3 * dy;
                     const p3 = new Position(x, y);
 
-                    if ( this.isInsideBoard(p3) && this.get(p3) === stone )
+                    if ( this.isInside(p3) && this.get(p3) === stone )
                     {
                         const p1 = new Position(position.x + dx, position.y + dy);
                         const p2 = new Position(position.x + 2 * dx, position.y + 2 * dy);
@@ -38,8 +40,8 @@ export class Board
 
                         if ( this.get(p1) === otherPlayer && this.get(p2) === otherPlayer )
                         {
-                            grid[p1.y][p1.x] = 'empty';
-                            grid[p2.y][p2.x] = 'empty';
+                            grid.set(p1, 'empty');
+                            grid.set(p2, 'empty');
                         }
                     }
                 }
@@ -51,44 +53,36 @@ export class Board
 
     public get width(): number
     {
-        return this.grid[0].length;
+        return this.grid.width;
     }
 
     public get height(): number
     {
-        return this.grid.length;
+        return this.grid.height;
     }
 
-    public isInsideBoard(position: Position): boolean
+    public isInside(position: Position): boolean
     {
-        return 0 <= position.x && position.x < this.width &&
-               0 <= position.y && position.y < this.height;
-    }
-
-    private copyGrid(): Square[][]
-    {
-        return this.grid.map(row => [...row]);
+        return this.grid.isInside(position);
     }
 
     public static create(rows: number, columns: number): Board
     {
-        const grid: Square[][] = [];
-
-        for (let row = 0; row < rows; row++)
-        {
-            const gridRow: Square[] = [];
-            for (let column = 0; column < columns; column++)
-            {
-                gridRow.push('empty');
-            }
-            grid.push(gridRow);
-        }
-
-        return new Board(grid);
+        return new Board(Grid.create<Square>(columns, rows, 'empty'));
     }
 
     public countStones(color: 'black' | 'white'): number
     {
-        return this.grid.flat().filter(square => square === color).length;
+        return this.grid.count(value => value === color);
+    }
+
+    public get rowIndices(): number[]
+    {
+        return this.grid.rowIndices;
+    }
+
+    public get columnIndices(): number[]
+    {
+        return this.grid.columnIndices;
     }
 }

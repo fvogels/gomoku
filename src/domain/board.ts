@@ -66,7 +66,15 @@ export class Board
 
     public captureStonesAround(position: Position): void
     {
-        const directions = [
+        for ( const direction of this.directionVectors)
+        {
+            this.captureStonesInDirection(position, direction);
+        }
+    }
+
+    public get directionVectors(): { dx: number; dy: number }[]
+    {
+        return [
             { dx: -1, dy: -1 },
             { dx: 0, dy: -1 },
             { dx: 1, dy: -1 },
@@ -76,11 +84,6 @@ export class Board
             { dx: 0, dy: 1 },
             { dx: 1, dy: 1 }
         ];
-
-        for ( const direction of directions )
-        {
-            this.captureStonesInDirection(position, direction);
-        }
     }
 
     public get width(): number

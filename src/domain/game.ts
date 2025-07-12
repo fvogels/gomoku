@@ -36,7 +36,9 @@ export class Game
             return this;
         }
 
-        const newBoard = this._board.putStone(position, this._currentPlayer);
+        const newBoard = this._board.copy();
+        newBoard.putStone(position, this._currentPlayer);
+        newBoard.captureStonesAround(position);
         const nextPlayer = opponent(this._currentPlayer);
         return new Game(newBoard, nextPlayer);
     }

@@ -12,43 +12,75 @@ export class Board
         this.grid = grid;
     }
 
+    public copy(): Board
+    {
+        return new Board(this.grid.copy());
+    }
+
     public get(position: Position): Square
     {
         return this.grid.at(position);
     }
 
-    public putStone(position: Position, stone: 'white' | 'black'): Board
+    public putStone(position: Position, stone: 'white' | 'black')
     {
-        const grid = this.grid.copy();
-        grid.set(position, stone);
+        this.grid.set(position, stone);
+    }
 
-        for ( const dx of [-1, 0, 1] )
+    private captureStonesInDirection(position: Position, direction: { dx: number; dy: number }): void
+    {
+        const p3 = new Position(
+            position.x + 3 * direction.dx,
+            position.y + 3 * direction.dy
+        );
+
+        if ( !this.isInside(p3) )
         {
-            for ( const dy of [-1, 0, 1] )
-            {
-                if ( dx !== 0 || dy !== 0 )
-                {
-                    const x = position.x + 3 * dx;
-                    const y = position.y + 3 * dy;
-                    const p3 = new Position(x, y);
-
-                    if ( this.isInside(p3) && this.get(p3) === stone )
-                    {
-                        const p1 = new Position(position.x + dx, position.y + dy);
-                        const p2 = new Position(position.x + 2 * dx, position.y + 2 * dy);
-                        const otherPlayer = opponent(stone);
-
-                        if ( this.get(p1) === otherPlayer && this.get(p2) === otherPlayer )
-                        {
-                            grid.set(p1, 'empty');
-                            grid.set(p2, 'empty');
-                        }
-                    }
-                }
-            }
+            return;
         }
 
-        return new Board(grid);
+        const owner = this.get(p3);
+
+        if ( owner === 'empty' )
+        {
+            return;
+        }
+
+        const p1 = new Position(
+            position.x + direction.dx,
+            position.y + direction.dy
+        );
+        const p2 = new Position(
+            position.x + 2 * direction.dx,
+            position.y + 2 * direction.dy
+        );
+
+        const otherPlayer = opponent(owner);
+
+        if ( this.get(p1) === otherPlayer && this.get(p2) === otherPlayer )
+        {
+            this.grid.set(p1, 'empty');
+            this.grid.set(p2, 'empty');
+        }
+    }
+
+    public captureStonesAround(position: Position): void
+    {
+        const directions = [
+            { dx: -1, dy: -1 },
+            { dx: 0, dy: -1 },
+            { dx: 1, dy: -1 },
+            { dx: -1, dy: 0 },
+            { dx: 1, dy: 0 },
+            { dx: -1, dy: 1 },
+            { dx: 0, dy: 1 },
+            { dx: 1, dy: 1 }
+        ];
+
+        for ( const direction of directions )
+        {
+            this.captureStonesInDirection(position, direction);
+        }
     }
 
     public get width(): number

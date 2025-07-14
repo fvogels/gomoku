@@ -17,8 +17,9 @@ function App(): React.ReactNode
         <>
             <Center>
                 <SpreadHorizontally>
-                    <StoneCount color="black" count={game.countStones('black')} />
                     <StoneCount color="white" count={game.countStones('white')} />
+                    {renderOutcome()}
+                    <StoneCount color="black" count={game.countStones('black')} />
                 </SpreadHorizontally>
                 <BoardView board={game.board} onClickSquare={onClickSquare} />
             </Center>
@@ -31,6 +32,28 @@ function App(): React.ReactNode
         if ( !game.isGameOver )
         {
             setGame(prevGame => prevGame.putStone(position));
+        }
+    }
+
+    function renderOutcome(): React.ReactNode
+    {
+        if ( game.isGameOver )
+        {
+            switch ( game.winner )
+            {
+                case 'white':
+                    return <span className="outcome">White wins!</span>;
+                case 'black':
+                    return <span className="outcome">Black wins!</span>;
+                case 'tie':
+                    return <span className="outcome">It's a tie!</span>;
+                default:
+                    return null;
+            }
+        }
+        else
+        {
+            return <></>;
         }
     }
 }

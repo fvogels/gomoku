@@ -7,7 +7,7 @@ import './App.css'
 import Center from './components/Center';
 import SpreadHorizontally from './components/SpreadHorizontally';
 import StoneCount from './components/StoneCount';
-
+import classes from './App.module.css';
 
 function App(): React.ReactNode
 {
@@ -42,11 +42,11 @@ function App(): React.ReactNode
             switch ( game.winner )
             {
                 case 'white':
-                    return <span className="outcome">White wins!</span>;
+                    return <span className={classes.outcome}>White wins!</span>;
                 case 'black':
-                    return <span className="outcome">Black wins!</span>;
+                    return <span className={classes.outcome}>Black wins!</span>;
                 case 'tie':
-                    return <span className="outcome">It's a tie!</span>;
+                    return <span className={classes.outcome}>It's a tie!</span>;
                 default:
                     return null;
             }

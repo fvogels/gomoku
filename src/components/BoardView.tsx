@@ -1,9 +1,8 @@
-import type { Square } from "@/domain/square";
-import classes from "./BoardView.module.css";
-import SquareView from "./SquareView";
+import type { Board } from "@/domain/board";
 import { Position } from "@/domain/position";
 import React from "react";
-import type { Board } from "@/domain/board";
+import classes from "./BoardView.module.css";
+import SquareView from "./SquareView";
 
 
 interface Props

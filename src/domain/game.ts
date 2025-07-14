@@ -3,21 +3,20 @@ import type { Position } from "./position";
 import { opponent } from "./square";
 
 
-export class Game
+export abstract class Game
 {
-    private readonly _board: Board;
-    private _currentPlayer: 'white' | 'black';
+    protected readonly _board: Board;
+
+    protected constructor(board: Board)
+    {
+        this._board = board;
+    }
 
     public static create(width: number, height: number): Game
     {
         const board = Board.create(width, height);
-        return new Game(board, 'white');
-    }
 
-    private constructor(board: Board, currentPlayer: 'white' | 'black')
-    {
-        this._board = board;
-        this._currentPlayer = currentPlayer;
+        return new GameInProgress(board, 'white');
     }
 
     public get board(): Board
@@ -25,12 +24,47 @@ export class Game
         return this._board;
     }
 
-    public get currentPlayer(): 'white' | 'black'
+    public abstract get currentPlayer(): 'white' | 'black';
+
+    public abstract get winner(): 'white' | 'black' | 'tie';
+
+    public abstract putStone(position: Position): Game;
+
+    public abstract get isGameOver(): boolean;
+
+    public countStones(color: 'black' | 'white'): number
+    {
+        return this._board.countStones(color);
+    }
+}
+
+class GameInProgress extends Game
+{
+    private _currentPlayer: 'white' | 'black';
+
+    constructor(board: Board, currentPlayer: 'white' | 'black')
+    {
+        super(board);
+
+        this._currentPlayer = currentPlayer;
+    }
+
+    public override get currentPlayer(): 'white' | 'black'
     {
         return this._currentPlayer;
     }
 
-    public putStone(position: Position): Game
+    public override get winner(): 'white' | 'black' | 'tie'
+    {
+        throw new Error("No winner yet, the game is still in progress.");
+    }
+
+    public override get isGameOver(): boolean
+    {
+        return false;
+    }
+
+    public override putStone(position: Position): Game
     {
         if (this._board.get(position) !== 'empty') {
             return this;
@@ -40,11 +74,50 @@ export class Game
         newBoard.putStone(position, this._currentPlayer);
         newBoard.captureStonesAround(position);
         const nextPlayer = opponent(this._currentPlayer);
-        return new Game(newBoard, nextPlayer);
+
+        if ( newBoard.fiveInARow(position) )
+        {
+            return new GameOver(newBoard, this._currentPlayer);
+        }
+
+        if ( newBoard.isFull )
+        {
+            return new GameOver(newBoard, 'tie');
+        }
+
+        return new GameInProgress(newBoard, nextPlayer);
+
+    }
+}
+
+class GameOver extends Game
+{
+    private _winner: 'white' | 'black' | 'tie';
+
+    constructor(board: Board, winner: 'white' | 'black' | 'tie')
+    {
+        super(board);
+
+        this._winner = winner;
     }
 
-    public countStones(color: 'black' | 'white'): number
+    public override get currentPlayer(): 'white' | 'black'
     {
-        return this._board.countStones(color);
+        throw new Error("Cannot put stone in a finished game.");
+    }
+
+    public override get winner(): 'white' | 'black' | 'tie'
+    {
+        return this._winner;
+    }
+
+    public override putStone(): Game
+    {
+        throw new Error("Cannot put stone in a finished game.");
+    }
+
+    public override get isGameOver(): boolean
+    {
+        return true;
     }
 }

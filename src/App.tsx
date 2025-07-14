@@ -28,7 +28,10 @@ function App(): React.ReactNode
 
     function onClickSquare(position: Position): void
     {
-        setGame(prevGame => prevGame.putStone(position));
+        if ( !game.isGameOver )
+        {
+            setGame(prevGame => prevGame.putStone(position));
+        }
     }
 }
 

@@ -72,6 +72,43 @@ export class Board
         }
     }
 
+    private countInDirection(position: Position, direction: { dx: number; dy: number }): number
+    {
+        let count = 0;
+        let currentPosition = position;
+
+        while ( this.isInside(currentPosition) && this.get(position) === this.get(currentPosition) )
+        {
+            count++;
+            currentPosition = new Position(
+                currentPosition.x + direction.dx,
+                currentPosition.y + direction.dy
+            );
+        }
+
+        return count;
+    }
+
+    public fiveInARow(position: Position): boolean
+    {
+        for ( const direction of this.halfDirectionVectors )
+        {
+            const count = this.countInDirection(position, direction) + this.countInDirection(position, { dx: -direction.dx, dy: -direction.dy }) - 1;
+
+            if ( count >= 5 )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public get isFull(): boolean
+    {
+        return this.grid.count(value => value === 'empty') === 0;
+    }
+
     public get directionVectors(): { dx: number; dy: number }[]
     {
         return [
@@ -83,6 +120,16 @@ export class Board
             { dx: -1, dy: 1 },
             { dx: 0, dy: 1 },
             { dx: 1, dy: 1 }
+        ];
+    }
+
+    public get halfDirectionVectors(): { dx: number; dy: number }[]
+    {
+        return [
+            { dx: -1, dy: 0 },
+            { dx: 0, dy: -1 },
+            { dx: 1, dy: 0 },
+            { dx: 0, dy: 1 }
         ];
     }
 

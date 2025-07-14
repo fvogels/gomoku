@@ -18,7 +18,7 @@ function App(): React.ReactNode
             <Center>
                 <SpreadHorizontally>
                     <StoneCount color="white" count={game.countStones('white')} />
-                    {renderOutcome()}
+                    {renderStatus()}
                     <StoneCount color="black" count={game.countStones('black')} />
                 </SpreadHorizontally>
                 <BoardView game={game} onClickSquare={onClickSquare} />
@@ -35,7 +35,7 @@ function App(): React.ReactNode
         }
     }
 
-    function renderOutcome(): React.ReactNode
+    function renderStatus(): React.ReactNode
     {
         if ( game.isGameOver )
         {
@@ -53,7 +53,14 @@ function App(): React.ReactNode
         }
         else
         {
-            return <></>;
+            if ( game.currentPlayer === 'white' )
+            {
+                return <span className={classes.currentPlayer}>White's turn</span>;
+            }
+            else
+            {
+                return <span className={classes.currentPlayer}>Black's turn</span>;
+            }
         }
     }
 }

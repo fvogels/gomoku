@@ -21,7 +21,7 @@ function App(): React.ReactNode
                     {renderOutcome()}
                     <StoneCount color="black" count={game.countStones('black')} />
                 </SpreadHorizontally>
-                <BoardView board={game.board} onClickSquare={onClickSquare} />
+                <BoardView game={game} onClickSquare={onClickSquare} />
             </Center>
         </>
     );

@@ -1,4 +1,4 @@
-import type { Board } from "@/domain/board";
+import type { Game } from "@/domain/game";
 import { Position } from "@/domain/position";
 import React from "react";
 import classes from "./BoardView.module.css";
@@ -7,7 +7,7 @@ import SquareView from "./SquareView";
 
 interface Props
 {
-    board: Board;
+    game: Game;
     onClickSquare?: (position: Position) => void;
 }
 
@@ -15,7 +15,7 @@ export default function BoardView(props: Props): React.ReactNode
 {
     return (
         <div className={classes.board}>
-            {props.board.rowIndices.map(rowIndex => renderRow(rowIndex))}
+            {props.game.board.rowIndices.map(rowIndex => renderRow(rowIndex))}
         </div>
     );
 
@@ -24,7 +24,7 @@ export default function BoardView(props: Props): React.ReactNode
     {
         return (
             <div key={rowIndex} className={classes.row}>
-                {props.board.columnIndices.map(colIndex => (
+                {props.game.board.columnIndices.map(colIndex => (
                     <React.Fragment key={colIndex}>
                         {renderSquare(rowIndex, colIndex)}
                     </React.Fragment>
@@ -36,7 +36,7 @@ export default function BoardView(props: Props): React.ReactNode
     function renderSquare(rowIndex: number, colIndex: number): React.ReactNode
     {
         const position = new Position(colIndex, rowIndex);
-        const square = props.board.get(position);
+        const square = props.game.board.get(position);
 
         return (
             <SquareView contents={square} onClick={() => props.onClickSquare?.(position)} />

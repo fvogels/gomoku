@@ -39,7 +39,7 @@ export default function BoardView(props: Props): React.ReactNode
         const square = props.game.board.get(position);
 
         return (
-            <SquareView contents={square} onClick={() => props.onClickSquare?.(position)} />
+            <SquareView contents={square} onClick={() => props.onClickSquare?.(position)} captured={props.game.wasCaptured(position)} />
         );
     }
 }

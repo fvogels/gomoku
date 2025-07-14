@@ -7,12 +7,19 @@ interface Props
 {
     contents: Square;
     onClick?: () => void;
+    captured: boolean;
 }
 
 export default function SquareView(props: Props): React.ReactNode
 {
+    const classNames = [classes.squareView];
+
+    if ( props.captured ) {
+        classNames.push(classes.captured);
+    }
+
     return (
-        <div className={classes.squareView} onClick={onClick}>
+        <div className={classNames.join(' ')} onClick={onClick}>
             {renderStone()}
         </div>
     );

@@ -16,7 +16,7 @@ export abstract class Game
     {
         const board = Board.create(width, height);
 
-        return new GameInProgress(board, 'white');
+        return new GameInProgress(board, 'white', []);
     }
 
     public get board(): Board
@@ -36,17 +36,27 @@ export abstract class Game
     {
         return this._board.countStones(color);
     }
+
+    public abstract get recentlyCaptured(): Position[];
+
+    public wasCaptured(position: Position): boolean
+    {
+        return this.recentlyCaptured.some(p => p.equals(position));
+    }
 }
 
 class GameInProgress extends Game
 {
     private _currentPlayer: 'white' | 'black';
 
-    constructor(board: Board, currentPlayer: 'white' | 'black')
+    private _recentlyCaptured: Position[];
+
+    constructor(board: Board, currentPlayer: 'white' | 'black', recentlyCaptured: Position[])
     {
         super(board);
 
         this._currentPlayer = currentPlayer;
+        this._recentlyCaptured = recentlyCaptured;
     }
 
     public override get currentPlayer(): 'white' | 'black'
@@ -66,13 +76,19 @@ class GameInProgress extends Game
 
     public override putStone(position: Position): Game
     {
-        if (this._board.get(position) !== 'empty') {
+        if (this._board.get(position) !== 'empty')
+        {
+            return this;
+        }
+
+        if ( this.wasCaptured(position) )
+        {
             return this;
         }
 
         const newBoard = this._board.copy();
         newBoard.putStone(position, this._currentPlayer);
-        newBoard.captureStonesAround(position);
+        const captured = newBoard.captureStonesAround(position);
         const nextPlayer = opponent(this._currentPlayer);
 
         if ( newBoard.fiveInARow(position) )
@@ -85,8 +101,12 @@ class GameInProgress extends Game
             return new GameOver(newBoard, 'tie');
         }
 
-        return new GameInProgress(newBoard, nextPlayer);
+        return new GameInProgress(newBoard, nextPlayer, captured);
+    }
 
+    public override get recentlyCaptured(): Position[]
+    {
+        return this._recentlyCaptured;
     }
 }
 
@@ -119,5 +139,10 @@ class GameOver extends Game
     public override get isGameOver(): boolean
     {
         return true;
+    }
+
+    public override get recentlyCaptured(): Position[]
+    {
+        return [];
     }
 }

@@ -27,7 +27,7 @@ export class Board
         this.grid.set(position, stone);
     }
 
-    private captureStonesInDirection(position: Position, direction: { dx: number; dy: number }): void
+    private captureStonesInDirection(position: Position, direction: { dx: number; dy: number }): Position[]
     {
         const p3 = new Position(
             position.x + 3 * direction.dx,
@@ -36,14 +36,14 @@ export class Board
 
         if ( !this.isInside(p3) )
         {
-            return;
+            return [];
         }
 
         const owner = this.get(p3);
 
         if ( owner === 'empty' )
         {
-            return;
+            return [];
         }
 
         const p1 = new Position(
@@ -61,15 +61,22 @@ export class Board
         {
             this.grid.set(p1, 'empty');
             this.grid.set(p2, 'empty');
+            return [p1, p2];
         }
+
+        return [];
     }
 
-    public captureStonesAround(position: Position): void
+    public captureStonesAround(position: Position): Position[]
     {
+        let captured: Position[] = [];
+
         for ( const direction of this.directionVectors)
         {
-            this.captureStonesInDirection(position, direction);
+            captured = [...captured, ...this.captureStonesInDirection(position, direction)];
         }
+
+        return captured;
     }
 
     private countInDirection(position: Position, direction: { dx: number; dy: number }): number

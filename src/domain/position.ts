@@ -8,4 +8,9 @@ export class Position
         this.x = x;
         this.y = y;
     }
+
+    public equals(other: Position): boolean
+    {
+        return this.x === other.x && this.y === other.y;
+    }
 }

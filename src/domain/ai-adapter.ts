@@ -54,7 +54,7 @@ class GomokuGameState implements GameState<Position> {
             }
         }
 
-        return playerLongest - otherLongest;
+        return game.board.countStones(player) - game.board.countStones(otherPlayer);
 
 
         function scan(positions: Position[]): void

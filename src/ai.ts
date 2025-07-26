@@ -5,9 +5,18 @@ export interface GameState<T>
     score: number;
 }
 
+function shuffle<T>(array: T[]): void
+{
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
 export function computeBestMove<T>(state: GameState<T>, depth: number): T
 {
     const moves = state.possibleMoves;
+    shuffle(moves);
     let bestMove = state.possibleMoves[0];
     let bestScore = scoreTheirTurn(state.makeMove(state.possibleMoves[0]), depth, -Infinity);
 

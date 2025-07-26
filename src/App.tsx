@@ -10,6 +10,7 @@ import StoneCount from './components/StoneCount';
 import classes from './App.module.css';
 import { bestMove } from './domain/ai-adapter';
 
+
 function App(): React.ReactNode
 {
     const [game, setGame] = useState(Game.create(19, 19));
@@ -36,7 +37,7 @@ function App(): React.ReactNode
 
             if ( !updatedGame.isGameOver )
             {
-                const bm = bestMove(updatedGame, 2)
+                const bm = bestMove(updatedGame, 3)
                 setGame(updatedGame.putStone(bm));
             }
             else

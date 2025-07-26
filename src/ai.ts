@@ -11,20 +11,21 @@ export function computeBestMove<T>(state: GameState<T>, depth: number): T
     let bestMove = state.possibleMoves[0];
     let bestScore = scoreTheirTurn(state.makeMove(state.possibleMoves[0]), depth, -Infinity);
 
-    console.log(`${JSON.stringify(state.possibleMoves[0])}: ${bestScore}`);
-
     for ( let i = 1; i < moves.length; i++ )
     {
         const move = moves[i];
         const newState = state.makeMove(move);
         const score = scoreTheirTurn(newState, depth, bestScore);
 
-        console.log(`${JSON.stringify(move)}: ${score}`);
-
         if ( score > bestScore )
         {
             bestScore = score;
             bestMove = move;
+
+            if ( bestScore === Infinity )
+            {
+                break;
+            }
         }
     }
 

@@ -33,11 +33,10 @@ function App(): React.ReactNode
         if ( !game.isGameOver && game.currentPlayer === 'white' && game.isValidMove(position) )
         {
             const updatedGame = game.putStone(position)
-            // setGame(updatedGame);
 
             if ( !updatedGame.isGameOver )
             {
-                const bm = bestMove(updatedGame, 3)
+                const bm = bestMove(updatedGame, 2)
                 setGame(updatedGame.putStone(bm));
             }
             else

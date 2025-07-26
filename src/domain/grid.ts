@@ -4,10 +4,14 @@ import { Position } from "./position";
 export class Grid<T>
 {
     private readonly grid: T[][];
+    private readonly rowRange: number[];
+    private readonly columnRange: number[];
 
-    private constructor(grid: T[][])
+    private constructor(grid: T[][], rowRange: number[], columnRange: number[])
     {
         this.grid = grid;
+        this.rowRange = rowRange;
+        this.columnRange = columnRange;
     }
 
     public at(position: Position): T
@@ -34,7 +38,7 @@ export class Grid<T>
     {
         const newGrid = this.grid.map(row => [...row]);
 
-        return new Grid(newGrid);
+        return new Grid(newGrid, this.rowRange, this.columnRange);
     }
 
     public isInside(position: Position): boolean
@@ -45,7 +49,9 @@ export class Grid<T>
     public static create<T>(width: number, height: number, initialValue: T): Grid<T>
     {
         const grid = Array.from({ length: height }, () => Array(width).fill(initialValue));
-        return new Grid(grid);
+        const rowRange = range(0, height);
+        const columnRange = range(0, width);
+        return new Grid(grid, rowRange, columnRange);
     }
 
     public count(predicate: (value: T) => boolean): number
@@ -68,12 +74,12 @@ export class Grid<T>
 
     public get rowIndices(): number[]
     {
-        return range(0, this.height);
+        return this.rowRange;
     }
 
     public get columnIndices(): number[]
     {
-        return range(0, this.width);
+        return this.columnRange;
     }
 
     public subsequence(start: Position, dx: number, dy: number): Position[]

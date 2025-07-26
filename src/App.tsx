@@ -8,6 +8,7 @@ import Center from './components/Center';
 import SpreadHorizontally from './components/SpreadHorizontally';
 import StoneCount from './components/StoneCount';
 import classes from './App.module.css';
+import { bestMove } from './domain/ai-adapter';
 
 function App(): React.ReactNode
 {
@@ -29,9 +30,20 @@ function App(): React.ReactNode
 
     function onClickSquare(position: Position): void
     {
-        if ( !game.isGameOver )
+        if ( !game.isGameOver && game.currentPlayer === 'white' && game.isValidMove(position) )
         {
-            setGame(prevGame => prevGame.putStone(position));
+            const updatedGame = game.putStone(position)
+            // setGame(updatedGame);
+
+            if ( !updatedGame.isGameOver )
+            {
+                const bm = bestMove(updatedGame, 3)
+                setGame(updatedGame.putStone(bm));
+            }
+            else
+            {
+                setGame(updatedGame);
+            }
         }
     }
 

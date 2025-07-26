@@ -39,9 +39,8 @@ export class Board
             return [];
         }
 
-        const owner = this.get(p3);
-
-        if ( owner === 'empty' )
+        const owner = this.get(position);
+        if ( owner === 'empty' || owner !== this.get(p3) )
         {
             return [];
         }
@@ -133,10 +132,10 @@ export class Board
     public get halfDirectionVectors(): { dx: number; dy: number }[]
     {
         return [
-            { dx: -1, dy: 0 },
-            { dx: 0, dy: -1 },
             { dx: 1, dy: 0 },
-            { dx: 0, dy: 1 }
+            { dx: 0, dy: 1 },
+            { dx: 1, dy: 1 },
+            { dx: 1, dy: -1 }
         ];
     }
 
@@ -173,5 +172,15 @@ export class Board
     public get columnIndices(): number[]
     {
         return this.grid.columnIndices;
+    }
+
+    public sequences(): Iterable<Position[]>
+    {
+        return this.grid.sequences();
+    }
+
+    public neighbors(position: Position): Position[]
+    {
+        return this.grid.neighbors(position);
     }
 }

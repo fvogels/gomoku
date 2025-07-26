@@ -1,5 +1,5 @@
 import { range } from "@/util";
-import type { Position } from "./position";
+import { Position } from "./position";
 
 export class Grid<T>
 {
@@ -74,5 +74,68 @@ export class Grid<T>
     public get columnIndices(): number[]
     {
         return range(0, this.width);
+    }
+
+    public subsequence(start: Position, dx: number, dy: number): Position[]
+    {
+        const positions: Position[] = [];
+        let current = start;
+
+        while ( this.isInside(current) )
+        {
+            positions.push(current);
+            current = current.move(dx, dy);
+        }
+
+        return positions;
+    }
+
+    public rowPositions(row: number): Position[]
+    {
+        return this.subsequence(new Position(0, row), 1, 0);
+    }
+
+    public columnPositions(column: number): Position[]
+    {
+        return this.subsequence(new Position(column, 0), 0, 1);
+    }
+
+    public seDiagonalPositions(start: Position): Position[]
+    {
+        return this.subsequence(start, 1, -1);
+    }
+
+    public swDiagonalPositions(start: Position): Position[]
+    {
+        return this.subsequence(start, -1, -1);
+    }
+
+    public *sequences(): Iterable<Position[]>
+    {
+        yield *this.rowIndices.map(row => this.rowPositions(row));
+
+        yield *this.columnIndices.map(column => this.columnPositions(column));
+
+        yield *this.columnIndices.map(column => this.seDiagonalPositions(new Position(column, 0)));
+        yield *this.rowIndices.map(row => this.seDiagonalPositions(new Position(0, row)));
+
+        yield *this.columnIndices.map(column => this.swDiagonalPositions(new Position(column, 0)));
+        yield *this.rowIndices.map(row => this.swDiagonalPositions(new Position(this.width - 1, row)));
+    }
+
+    public neighbors(position: Position): Position[]
+    {
+        const directions = [
+            { dx: -1, dy: 0 },  // left
+            { dx: 1, dy: 0 },   // right
+            { dx: 0, dy: -1 },  // up
+            { dx: 0, dy: 1 },   // down
+            { dx: -1, dy: -1 }, // top-left
+            { dx: 1, dy: -1 },  // top-right
+            { dx: -1, dy: 1 },  // bottom-left
+            { dx: 1, dy: 1 }    // bottom-right
+        ];
+
+        return directions.map(dir => position.move(dir.dx, dir.dy)).filter(pos => this.isInside(pos));
     }
 }

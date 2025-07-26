@@ -1,5 +1,5 @@
 import { Board } from "./board";
-import type { Position } from "./position";
+import { Position } from "./position";
 import { opponent } from "./square";
 
 
@@ -28,6 +28,8 @@ export abstract class Game
 
     public abstract get winner(): 'white' | 'black' | 'tie';
 
+    public abstract isValidMove(position: Position): boolean;
+
     public abstract putStone(position: Position): Game;
 
     public abstract get isGameOver(): boolean;
@@ -42,6 +44,26 @@ export abstract class Game
     public wasCaptured(position: Position): boolean
     {
         return this.recentlyCaptured.some(p => p.equals(position));
+    }
+
+    public get possibleMoves(): Position[]
+    {
+        const moves: Position[] = [];
+
+        for ( const row of this._board.rowIndices )
+        {
+            for ( const column of this._board.columnIndices )
+            {
+                const position = new Position(row, column);
+
+                if ( this.isValidMove(position) )
+                {
+                    moves.push(position);
+                }
+            }
+        }
+
+        return moves;
     }
 }
 
@@ -74,14 +96,14 @@ class GameInProgress extends Game
         return false;
     }
 
+    public override isValidMove(position: Position): boolean
+    {
+        return this._board.get(position) === 'empty' && !this.wasCaptured(position);
+    }
+
     public override putStone(position: Position): Game
     {
-        if (this._board.get(position) !== 'empty')
-        {
-            return this;
-        }
-
-        if ( this.wasCaptured(position) )
+        if ( !this.isValidMove(position) )
         {
             return this;
         }
@@ -144,5 +166,10 @@ class GameOver extends Game
     public override get recentlyCaptured(): Position[]
     {
         return [];
+    }
+
+    public override isValidMove(): boolean
+    {
+        return false;
     }
 }

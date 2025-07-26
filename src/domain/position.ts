@@ -13,4 +13,14 @@ export class Position
     {
         return this.x === other.x && this.y === other.y;
     }
+
+    public move(dx: number, dy: number): Position
+    {
+        return new Position(this.x + dx, this.y + dy);
+    }
+
+    public toString(): string
+    {
+        return `(${this.x}, ${this.y})`;
+    }
 }
